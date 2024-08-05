@@ -6,7 +6,6 @@ import java.util.Map;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -26,7 +25,8 @@ public class XposedEntry implements IXposedHookLoadPackage {
     }
 
     boolean initialize(){
-        is_hyper_os_ = HyperHelper.isHyperOs();
+        is_hyper_os_ = OsHelper.isHyperOs();
+        MyLog.log(is_hyper_os_?"Hyper OS":"MIUI");
         return true;
     }
 
@@ -48,7 +48,7 @@ public class XposedEntry implements IXposedHookLoadPackage {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     int id = param.thisObject.hashCode();
-                    MyLog.log("Constructor  MiuiBatteryMeterView"+id);
+                    MyLog.log("Constructor MiuiBatteryMeterView: "+id);
                     if(!timerUpdateTexts_.containsKey(id)) {
                         TimerUpdateText update_timer = new TimerUpdateText(param.thisObject);
                         timerUpdateTexts_.put(id, update_timer);
@@ -61,7 +61,7 @@ public class XposedEntry implements IXposedHookLoadPackage {
                 protected void afterHookedMethod(MethodHookParam param)
                         throws Throwable {
                     int id = param.thisObject.hashCode();
-                    MyLog.log("initMiuiView "+id);
+                    MyLog.log("initMiuiView: "+id);
                     if(!timerUpdateTexts_.containsKey(id)) {
                         TimerUpdateText update_timer = new TimerUpdateText(param.thisObject);
                         timerUpdateTexts_.put(id, update_timer);

@@ -98,7 +98,7 @@ public class TimerUpdateText {
             String raw = new String(bytes).replace(s,"").replace("\n","");
             float raw_value = ((float)Integer.parseInt(raw))/100;
             int default_value = Integer.parseInt(default_str_value);
-            if(Math.abs(default_value - raw_value)>5){
+            if(Math.abs(default_value - raw_value)>5 && default_value != 0){
                 MyLog.log(String.format("%d - %.2f > 5", default_value, raw_value));
                 return default_str_value;
             }

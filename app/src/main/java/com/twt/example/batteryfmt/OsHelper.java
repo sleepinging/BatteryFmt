@@ -4,17 +4,20 @@ import android.text.TextUtils;
 
 import java.lang.reflect.Method;
 
-public class HyperHelper {
+public class OsHelper {
     /**
      * 是否为澎湃系统
      *
      * @return true为澎湃系统
      */
     public static boolean isHyperOs() {
-        if(!"Xiaomi".equalsIgnoreCase(android.os.Build.BRAND)){
+        MyLog.log("android.os.Build.BRAND:" + android.os.Build.BRAND);
+        if(!"Xiaomi".equalsIgnoreCase(android.os.Build.BRAND) && !"Redmi".equalsIgnoreCase(android.os.Build.BRAND)){
             return false;
         }
-        return !getHyperVersion().isEmpty();
+        String ver = getHyperVersion();
+        MyLog.log("ver:"+ver);
+        return ver.startsWith("OS");
     }
 
     /**
