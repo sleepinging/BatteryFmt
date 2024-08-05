@@ -13,6 +13,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 public class XposedEntry implements IXposedHookLoadPackage {
     TimerUpdateText timerUpdateText_;
     Map<Integer, TimerUpdateText> timerUpdateTexts_;
+    boolean is_hyper_os_ = false;
 
     boolean expired(){
         LocalDateTime currentDateTime = LocalDateTime.now();  // 获取当前日期时间
@@ -22,6 +23,11 @@ public class XposedEntry implements IXposedHookLoadPackage {
             return true;
         }
         return false;
+    }
+
+    boolean initialize(){
+        is_hyper_os_ = HyperHelper.isHyperOs();
+        return true;
     }
 
     @Override
@@ -34,40 +40,42 @@ public class XposedEntry implements IXposedHookLoadPackage {
 //            MyLog.log("expired");
 //            return;
 //        }
+        initialize();
         timerUpdateTexts_ = new HashMap<>();
         // 可能有多个
-        XposedHelpers.findAndHookConstructor("com.android.systemui.statusbar.views.MiuiBatteryMeterView",  lpparam.classLoader, android.content.Context.class, android.util.AttributeSet.class, int.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                int id = param.thisObject.hashCode();
-                MyLog.log("Constructor  MiuiBatteryMeterView"+id);
-                if(!timerUpdateTexts_.containsKey(id)) {
-                    TimerUpdateText update_timer = new TimerUpdateText(param.thisObject);
-                    timerUpdateTexts_.put(id, update_timer);
+        if(is_hyper_os_){
+            XposedHelpers.findAndHookConstructor("com.android.systemui.statusbar.views.MiuiBatteryMeterView",  lpparam.classLoader, android.content.Context.class, android.util.AttributeSet.class, int.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    int id = param.thisObject.hashCode();
+                    MyLog.log("Constructor  MiuiBatteryMeterView"+id);
+                    if(!timerUpdateTexts_.containsKey(id)) {
+                        TimerUpdateText update_timer = new TimerUpdateText(param.thisObject);
+                        timerUpdateTexts_.put(id, update_timer);
+                    }
                 }
-//                if(timerUpdateText_!=null){
-//                    timerUpdateText_.stop();
-//                }
-//                timerUpdateText_ = new TimerUpdateText(param.thisObject);
-            }
-        });
+            });
+        } else {
+            XposedHelpers.findAndHookMethod("com.android.systemui.statusbar.views.MiuiBatteryMeterView", lpparam.classLoader,"initMiuiView", new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param)
+                        throws Throwable {
+                    int id = param.thisObject.hashCode();
+                    MyLog.log("initMiuiView "+id);
+                    if(!timerUpdateTexts_.containsKey(id)) {
+                        TimerUpdateText update_timer = new TimerUpdateText(param.thisObject);
+                        timerUpdateTexts_.put(id, update_timer);
+                    }
+    //                if(timerUpdateText_!=null){
+    //                    timerUpdateText_.stop();
+    //                }
+    //                timerUpdateText_ = new TimerUpdateText(param.thisObject);
+                }
+            });
+        }
 
-//        XposedHelpers.findAndHookMethod("com.android.systemui.statusbar.views.MiuiBatteryMeterView", lpparam.classLoader,"initMiuiView", new XC_MethodHook() {
-//            @Override
-//            protected void afterHookedMethod(MethodHookParam param)
-//                    throws Throwable {
-//                int id = param.thisObject.hashCode();
-//                MyLog.log("initMiuiView "+id);
-//                if(!timerUpdateTexts_.containsKey(id)) {
-//                    TimerUpdateText update_timer = new TimerUpdateText(param.thisObject);
-//                    timerUpdateTexts_.put(id, update_timer);
-//                }
-////                if(timerUpdateText_!=null){
-////                    timerUpdateText_.stop();
-////                }
-////                timerUpdateText_ = new TimerUpdateText(param.thisObject);
-//            }
-//        });
+
+
 
         XposedHelpers.findAndHookMethod("com.android.systemui.statusbar.views.MiuiBatteryMeterView", lpparam.classLoader, "updateChargeAndText", new XC_MethodHook() {
             @Override
