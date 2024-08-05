@@ -1,4 +1,4 @@
-package com.twt.example.barretyfmt;
+package com.twt.example.batteryfmt;
 
 import org.junit.Test;
 

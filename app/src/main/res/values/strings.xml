@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">BarretyFmt</string>
+    <string name="app_name">BatteryFmt</string>
+
+    <string-array name="xposed_scope">
+        <item>com.android.systemui</item>
+    </string-array>
 </resources>

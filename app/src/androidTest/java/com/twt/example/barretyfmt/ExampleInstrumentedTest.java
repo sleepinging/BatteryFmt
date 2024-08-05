@@ -1,4 +1,4 @@
-package com.twt.example.barretyfmt;
+package com.twt.example.batteryfmt;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.twt.example.barretyfmt", appContext.getPackageName());
+        assertEquals("com.twt.example.batteryfmt", appContext.getPackageName());
     }
 }

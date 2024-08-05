@@ -3,15 +3,15 @@ plugins {
 }
 
 android {
-    namespace 'com.twt.example.barretyfmt'
+    namespace 'com.twt.example.batteryfmt'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.twt.example.barretyfmt"
+        applicationId "com.twt.example.batteryfmt"
         minSdk 31
         targetSdk 34
         versionCode 1
-        versionName "0.0.1.44"
+        versionName "0.0.1.49"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
