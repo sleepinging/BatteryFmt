@@ -2,6 +2,33 @@ plugins {
     id 'com.android.application'
 }
 
+// 自动递增逻辑
+def autoIncrementVersion() {
+    def versionFile = file('version.properties')
+    def properties = new Properties()
+    properties.load(new FileInputStream(versionFile))
+    def currentBuild = properties['build_number'].toInteger()
+    currentBuild++ // 递增
+    properties['build_number'] = currentBuild.toString()
+    properties.store(versionFile.newWriter(), "Auto-incremented build number")
+    return currentBuild
+}
+
+// 仅在Release构建时触发递增
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.hasTask(':app:assembleDebug') || taskGraph.hasTask(':app:assembleRelease')) {
+        autoIncrementVersion()
+    }
+}
+
+// 读取当前版本号
+def getCurrentVersion() {
+    def versionFile = file('version.properties')
+    def properties = new Properties()
+    properties.load(new FileInputStream(versionFile))
+    return properties['build_number'].toInteger()
+}
+
 android {
     namespace 'com.twt.example.batteryfmt'
     compileSdk 34
@@ -11,7 +38,7 @@ android {
         minSdk 31
         targetSdk 34
         versionCode 1
-        versionName "0.0.2.5"
+        versionName "0.0.2.${getCurrentVersion()}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
